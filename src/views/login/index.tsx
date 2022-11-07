@@ -2,6 +2,7 @@ import React from "react";
 import loginLeft from "@/assets/images/login_left.png";
 import logo from "@/assets/images/logo.png";
 import { Switch } from "antd";
+import LoginForm from "./components/LoginForm";
 import "./index.less";
 
 export default function Login() {
@@ -21,6 +22,7 @@ export default function Login() {
             <img src={logo} alt="logo" className="login-icon" />
             <span className="logo-text">Hooks-Admin</span>
           </div>
+          <LoginForm />
         </div>
       </div>
     </div>
