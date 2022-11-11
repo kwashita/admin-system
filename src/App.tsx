@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Router from "@/routers/index";
 import { HashRouter } from "react-router-dom";
+import { connect } from "react-redux";
 import "./App.css";
 
 function App() {
@@ -10,5 +11,6 @@ function App() {
     </HashRouter>
   );
 }
+const mapStateToProps = (state: any) => state.global;
 
-export default App;
+export default connect(mapStateToProps)(App);
