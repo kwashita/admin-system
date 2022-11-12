@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button, Form, Input, message } from "antd";
 import { UserOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { Login } from "@/api/interface";
-import { loginApi } from "@/api/modules/login";
+import { loginApi } from "@/api/modules/login"; 
 
 const LoginForm = () => {
   const [form] = Form.useForm();
@@ -15,6 +15,8 @@ const LoginForm = () => {
 
     loginForm.password = md5(loginForm.password);
     const { data } = await loginApi(loginForm);
+    console.log("till");
+    
   };
 
   const onFinishFailed = () => {

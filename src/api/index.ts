@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 import { showFullScreenLoading } from "@/config/serviceLoading";
 import { AxiosCanceler } from "./helper/axiosCancel";
 import { store } from "@/redux";
-
+import {ResultData} from "@/api/interface"
 // const axionsCanceler = new AxiosCanceler();
 
 const config = {
@@ -11,6 +11,7 @@ const config = {
   timeout: 10000,
   withCredentials: true,
 };
+
 console.log(config);
 
 class RequestHttp {
@@ -24,11 +25,16 @@ class RequestHttp {
         AxiosCanceler.addPending(config);
         config.headers!.noLoading || showFullScreenLoading();
         const token: string = store.getState().global.taken;
+        return {...config, headers: {...config.headers, "x-access-token": token}}
       },
       (error: AxiosError) => {
         return Promise.reject(error);
       }
     );
+  }
+
+  post<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {
+    return this.service.post(url, params, _object)
   }
 }
 
