@@ -1,10 +1,13 @@
 import NProgress from "@/config/nprogress";
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
-import { showFullScreenLoading } from "@/config/serviceLoading";
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { showFullScreenLoading, tryHideFullScreenLoading } from "@/config/serviceLoading";
 import { AxiosCanceler } from "./helper/axiosCancel";
 import { store } from "@/redux";
 import {ResultData} from "@/api/interface"
-// const axionsCanceler = new AxiosCanceler();
+import { ResultEnum } from "@/enums/httpEnum";
+
+
+const axiosCanceler = new AxiosCanceler();
 
 const config = {
   baseURL: import.meta.env.VITE_API_URL as string,
@@ -12,7 +15,6 @@ const config = {
   withCredentials: true,
 };
 
-console.log(config);
 
 class RequestHttp {
   service: AxiosInstance;
@@ -22,7 +24,7 @@ class RequestHttp {
     this.service.interceptors.request.use(
       (config: AxiosRequestConfig) => {
         NProgress.start();
-        AxiosCanceler.addPending(config);
+        axiosCanceler.addPending(config);
         config.headers!.noLoading || showFullScreenLoading();
         const token: string = store.getState().global.taken;
         return {...config, headers: {...config.headers, "x-access-token": token}}
@@ -31,6 +33,19 @@ class RequestHttp {
         return Promise.reject(error);
       }
     );
+
+    this.service.interceptors.response.use(
+      (response: AxiosResponse)=>{
+        const {data, config} = response;
+        NProgress.done();
+        axiosCanceler.removePending(config);
+        tryHideFullScreenLoading();
+        if(data.code == ResultEnum.OVERDUE) {
+          
+        }
+
+      }, ()=>{}
+    )
   }
 
   post<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {
