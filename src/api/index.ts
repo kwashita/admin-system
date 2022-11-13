@@ -5,7 +5,9 @@ import { AxiosCanceler } from "./helper/axiosCancel";
 import { store } from "@/redux";
 import {ResultData} from "@/api/interface"
 import { ResultEnum } from "@/enums/httpEnum";
-
+import {setToken} from "@/redux/modules/global/action";
+import { message } from "antd";
+import {checkStatus} from './helper/checkStatus';
 
 const axiosCanceler = new AxiosCanceler();
 
@@ -41,10 +43,29 @@ class RequestHttp {
         axiosCanceler.removePending(config);
         tryHideFullScreenLoading();
         if(data.code == ResultEnum.OVERDUE) {
-          
+          store.dispatch(setToken(""));
+          message.error(data.msg);
+          window.location.href = '/login';
+          return Promise.reject(data);
         }
+        if(data.code && data.code !== ResultEnum.SUCCESS) {
+          message.error(data.msg);
+          return Promise.reject(data);
+        }
+        return data;
 
-      }, ()=>{}
+      }, 
+      async (error: AxiosError)=>{
+        const {response} = error;
+        NProgress.done();
+        tryHideFullScreenLoading();
+        if(error.message.indexOf("timeout") !== -1) {
+          message.error("Time out, please try it later!");
+        }
+        if(response) checkStatus(response.status);
+        if(!window.navigator.onLine) window.location.hash = "/500";
+        return Promise.reject(error);
+      }
     )
   }
 

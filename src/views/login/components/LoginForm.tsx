@@ -15,8 +15,6 @@ const LoginForm = () => {
 
     loginForm.password = md5(loginForm.password);
     const { data } = await loginApi(loginForm);
-    console.log("till");
-    
   };
 
   const onFinishFailed = () => {
