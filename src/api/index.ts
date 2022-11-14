@@ -18,6 +18,8 @@ const config = {
 };
 
 
+
+
 class RequestHttp {
   service: AxiosInstance;
   public constructor(config: AxiosRequestConfig) {
@@ -66,7 +68,7 @@ class RequestHttp {
         if(!window.navigator.onLine) window.location.hash = "/500";
         return Promise.reject(error);
       }
-    )
+    );
   }
 
   post<T>(url: string, params?: object, _object = {}): Promise<ResultData<T>> {

@@ -2,19 +2,32 @@ import md5 from "js-md5";
 import { useState } from "react";
 import { Button, Form, Input, message } from "antd";
 import { UserOutlined, CloseCircleOutlined } from "@ant-design/icons";
-import { Login } from "@/api/interface";
-import { loginApi } from "@/api/modules/login"; 
+import { Login } from "../../../api/interface";
+import { loginApi } from "../../../api/modules/login"; 
+import { setToken } from "@/redux/modules/global/action";
+import { useNavigate } from "react-router-dom";
+import { HOME_URL } from "@/config/config";
 
-const LoginForm = () => {
+const LoginForm = (props: any) => {
+  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
+  const {setToken, setTabsList} = props;
+  const navigate = useNavigate(); 
 
   const onFinish = async (loginForm: Login.ReqLoginForm) => {
-    setLoading(true);
-    console.log(loginForm);
-
-    loginForm.password = md5(loginForm.password);
-    const { data } = await loginApi(loginForm);
+    try {
+      setLoading(true);
+      loginForm.password = md5(loginForm.password);
+      const { data } = await loginApi(loginForm);
+      setToken(data?.access_token);
+      // setTabsList([]);
+      message.success("Login successed~!");
+      navigate(HOME_URL);
+      
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onFinishFailed = () => {

@@ -8,7 +8,7 @@ const globalState: GlobalState = {
 };
 
 const global = (state: GlobalState = globalState, action: AnyAction) =>
-  produce(state, (draftState) => {
+  produce(state, draftState => {
     switch (action.type) {
       case types.SET_TOKEN:
         draftState.token = action.token;

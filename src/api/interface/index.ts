@@ -13,5 +13,9 @@ export namespace Login{
         usename: string;
         password: string;
     }
+
+    export interface ResLogin{
+        access_token: string
+    }
 }
 
